@@ -4,50 +4,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a wealth management agent chat application project. The codebase is currently empty and ready for initial development.
+This is a wealth management agent chat application built with LangChain, LangGraph, and OpenAI ChatGPT. Features include conversation memory, state management, and optional LangSmith tracing.
 
 ## Development Setup
 
-Since this is a new project, the following setup will likely be needed:
-
-### For Python-based LangChain Implementation
+### Quick Setup
 ```bash
-# Install dependencies
-pip install langchain-core langgraph
-pip install "langchain[google-genai]"  # or preferred LLM provider
-pip install streamlit  # for web interface
-pip install python-dotenv  # for environment variables
+# Automated setup with virtual environment
+./setup.sh
 
-# Run the application
+# Manual setup
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+# Edit .env and add your OpenAI API key
+```
+
+### Running the Application
+```bash
+# Start the chat interface
 python main.py
-# or for Streamlit web app
-streamlit run app.py
-
-# Run tests
-pytest
-# or
-python -m pytest tests/
 ```
 
-### For Node.js Implementation
-```bash
-# Install dependencies
-npm install
-
-# Development server
-npm run dev
-
-# Build production
-npm run build
-
-# Run tests
-npm test
-npm run test:watch  # for watch mode
-
-# Linting and formatting
-npm run lint
-npm run format
-```
+### Environment Configuration
+Required in `.env` file:
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `LANGSMITH_TRACING=true` (optional): Enable tracing
+- `LANGSMITH_API_KEY`: Your LangSmith API key (optional)
+- `LANGSMITH_PROJECT`: Project name for LangSmith (optional)
 
 ## Architecture Considerations
 
