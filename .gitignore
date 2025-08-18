@@ -124,6 +124,9 @@ coverage/
 *.db
 *.sqlite
 *.sqlite3
+*.db-shm
+*.db-wal
+wealth_agent_memories.db*
 
 # Temporary files
 tmp/

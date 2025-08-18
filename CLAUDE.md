@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a wealth management agent chat application built with LangChain, LangGraph, and OpenAI ChatGPT. Features include conversation memory, state management, and optional LangSmith tracing.
+This is a wealth management agent chat application built with LangChain, LangGraph, LangMem, and OpenAI ChatGPT. The agent uses advanced memory capabilities to provide personalized financial guidance by remembering user preferences, goals, and past conversations across sessions.
 
 ## Development Setup
 
@@ -23,8 +23,11 @@ cp .env.example .env
 
 ### Running the Application
 ```bash
-# Start the chat interface
+# Start the chat interface (prompts for user ID)
 python main.py
+
+# Test memory functionality
+python test_memory.py
 ```
 
 ### Environment Configuration
@@ -55,7 +58,11 @@ When developing this wealth agent application, consider:
 - Implement rate limiting for API calls
 
 ### LangChain Integration Patterns
-- Use StateGraph for conversation state management
+- **LangMem SDK**: Long-term memory for user preferences and conversation history
+- **User namespacing**: Each user gets isolated memory space for privacy
+- **Memory tools**: `create_manage_memory_tool` and `create_search_memory_tool` for automatic memory management
+- **React agent**: Uses `create_react_agent` for tool integration
+- **InMemoryStore**: Current storage backend (can be upgraded to persistent storage)
 - Implement message trimming for token management
 - Create custom tools for financial calculations
 - Use prompt templates for consistent financial advice formatting

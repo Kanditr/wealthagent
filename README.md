@@ -36,11 +36,13 @@ python main.py
 
 ## Features
 
-- Interactive chat interface
-- Memory persistence across conversations
-- LangGraph state management
-- OpenAI ChatGPT integration
-- Optional LangSmith tracing
+- **Interactive chat interface** with user identification
+- **Long-term memory** using LangMem SDK - remembers user preferences, financial goals, and past conversations
+- **Personalized experience** - each user gets their own memory namespace for privacy
+- **Intelligent memory management** - automatically extracts and stores important financial information
+- **Memory search capabilities** - retrieves relevant context from past conversations
+- **OpenAI ChatGPT integration** with gpt-4o-mini model
+- **Optional LangSmith tracing** for debugging and monitoring
 
 ## Environment Variables
 
@@ -53,4 +55,37 @@ python main.py
 
 ## Usage
 
-The chat agent provides financial guidance and wealth management assistance. All responses are for educational purposes only.
+### Basic Usage
+1. Run `python main.py`
+2. Enter a user ID (or press Enter for 'demo_user')
+3. Start chatting! The agent will remember your preferences and past conversations
+
+### Memory Features
+The agent automatically:
+- Stores your investment preferences and risk tolerance
+- Remembers your financial goals and timeline
+- Recalls past conversations and advice given
+- Provides personalized recommendations based on your history
+
+### Testing Memory
+Run the test scripts to see memory functionality:
+```bash
+# Test memory within single session
+python test_memory.py
+
+# Test persistence across application restarts
+python test_persistence.py
+```
+
+### Memory Persistence
+✅ **Automatic Persistence**: The agent now uses SQLite + InMemoryStore hybrid:
+- **Conversation history** persists across application restarts
+- **User memories** are automatically saved to SQLite database
+- **Fast performance** during active sessions with InMemoryStore
+- **User isolation** - each user gets their own secure memory space
+
+A `wealth_agent_memories.db` file will be created automatically in your project directory.
+
+See `MEMORY.md` for detailed memory system documentation.
+
+**Note:** All responses are for educational purposes only and not financial advice.
