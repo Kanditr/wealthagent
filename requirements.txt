@@ -7,3 +7,4 @@ langmem>=0.0.29
 openai>=1.0.0
 numpy>=1.24.0
 langgraph-checkpoint-sqlite>=2.0.0
+alpaca-py>=0.29.0

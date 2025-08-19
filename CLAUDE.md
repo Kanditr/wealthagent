@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a wealth management agent chat application built with LangChain, LangGraph, LangMem, and OpenAI ChatGPT. The agent uses advanced memory capabilities to provide personalized financial guidance by remembering user preferences, goals, and past conversations across sessions.
+This is a wealth management agent chat application built with LangChain, LangGraph, LangMem, Alpaca API, and OpenAI ChatGPT. The agent provides personalized financial guidance using advanced memory capabilities and real portfolio data integration, remembering user preferences and analyzing actual investment holdings.
 
 ## Development Setup
 
@@ -33,6 +33,9 @@ python test_memory.py
 ### Environment Configuration
 Required in `.env` file:
 - `OPENAI_API_KEY`: Your OpenAI API key
+- `ALPACA_API_KEY` (optional): Your Alpaca API key for portfolio access
+- `ALPACA_SECRET_KEY` (optional): Your Alpaca secret key
+- `ALPACA_PAPER_TRADING=true` (optional): Enable paper trading mode
 - `LANGSMITH_TRACING=true` (optional): Enable tracing
 - `LANGSMITH_API_KEY`: Your LangSmith API key (optional)
 - `LANGSMITH_PROJECT`: Project name for LangSmith (optional)
@@ -43,12 +46,13 @@ When developing this wealth agent application, consider:
 
 ### Core Components
 - **Chat Interface**: User interaction layer for financial queries
-- **LLM Integration**: LangChain-based conversation management
-- **Financial Data Sources**: Integration with market data APIs
+- **LLM Integration**: LangChain-based conversation management with tool support
+- **Memory System**: LangMem SDK for persistent user preferences and conversation history
+- **Portfolio Integration**: Alpaca API for real-time portfolio data and positions
 - **Risk Assessment**: Portfolio analysis and risk evaluation modules
-- **Recommendation Engine**: Investment advice generation
-- **User Authentication**: Secure user session management
-- **Data Storage**: Conversation history and user preferences
+- **Recommendation Engine**: Investment advice based on actual holdings
+- **User Authentication**: Secure user session management with isolated memory
+- **Data Storage**: SQLite persistence for conversations, InMemoryStore for performance
 
 ### Security Requirements
 - Never log or store sensitive financial information
@@ -61,8 +65,10 @@ When developing this wealth agent application, consider:
 - **LangMem SDK**: Long-term memory for user preferences and conversation history
 - **User namespacing**: Each user gets isolated memory space for privacy
 - **Memory tools**: `create_manage_memory_tool` and `create_search_memory_tool` for automatic memory management
-- **React agent**: Uses `create_react_agent` for tool integration
-- **InMemoryStore**: Current storage backend (can be upgraded to persistent storage)
+- **Portfolio tools**: `AlpacaPortfolioTool` for real-time portfolio data access
+- **React agent**: Uses `create_react_agent` for comprehensive tool integration
+- **Hybrid storage**: SQLite checkpointing + InMemoryStore for performance
+- **Tool-based architecture**: Clean separation of concerns with specialized tools
 - Implement message trimming for token management
 - Create custom tools for financial calculations
 - Use prompt templates for consistent financial advice formatting

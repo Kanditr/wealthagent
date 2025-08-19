@@ -38,9 +38,11 @@ python main.py
 
 - **Interactive chat interface** with user identification
 - **Long-term memory** using LangMem SDK - remembers user preferences, financial goals, and past conversations
+- **Real portfolio integration** with Alpaca brokerage - access live portfolio data, positions, and performance
 - **Personalized experience** - each user gets their own memory namespace for privacy
 - **Intelligent memory management** - automatically extracts and stores important financial information
 - **Memory search capabilities** - retrieves relevant context from past conversations
+- **Portfolio analysis** - provides advice based on actual holdings and account information
 - **OpenAI ChatGPT integration** with gpt-4o-mini model
 - **Optional LangSmith tracing** for debugging and monitoring
 
@@ -49,6 +51,9 @@ python main.py
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `OPENAI_API_KEY` | Yes | Your OpenAI API key |
+| `ALPACA_API_KEY` | No | Your Alpaca API key for portfolio access |
+| `ALPACA_SECRET_KEY` | No | Your Alpaca secret key |
+| `ALPACA_PAPER_TRADING` | No | Enable paper trading mode (true/false, default: true) |
 | `LANGSMITH_TRACING` | No | Enable LangSmith tracing (true/false) |
 | `LANGSMITH_API_KEY` | No | Your LangSmith API key |
 | `LANGSMITH_PROJECT` | No | LangSmith project name |
@@ -67,14 +72,25 @@ The agent automatically:
 - Recalls past conversations and advice given
 - Provides personalized recommendations based on your history
 
-### Testing Memory
-Run the test scripts to see memory functionality:
+### Portfolio Features (Optional)
+With Alpaca API setup, the agent can:
+- Access your real portfolio positions and holdings
+- Provide account summary and performance data
+- Give personalized advice based on your actual investments
+- Track portfolio changes and performance over time
+- Analyze individual positions and suggest optimizations
+
+### Testing
+Run the test scripts to verify functionality:
 ```bash
 # Test memory within single session
 python test_memory.py
 
 # Test persistence across application restarts
 python test_persistence.py
+
+# Test Alpaca portfolio integration
+python test_alpaca.py
 ```
 
 ### Memory Persistence
@@ -87,5 +103,16 @@ python test_persistence.py
 A `wealth_agent_memories.db` file will be created automatically in your project directory.
 
 See `MEMORY.md` for detailed memory system documentation.
+
+## Alpaca Setup (Optional)
+
+To enable portfolio features:
+
+1. **Sign up for Alpaca**: Visit [alpaca.markets](https://alpaca.markets/) and create an account
+2. **Get API keys**: Go to Paper Trading section and generate API key and secret
+3. **Add to .env**: Copy credentials to your `.env` file
+4. **Test connection**: Run `python test_alpaca.py` to verify setup
+
+The agent works without Alpaca - portfolio features are optional but provide much more personalized advice.
 
 **Note:** All responses are for educational purposes only and not financial advice.

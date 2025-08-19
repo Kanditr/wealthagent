@@ -7,6 +7,7 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langmem import create_manage_memory_tool, create_search_memory_tool
+from alpaca_tool import create_alpaca_portfolio_tool
 
 load_dotenv()
 
@@ -27,12 +28,13 @@ class WealthAgentChat:
         )
         self.memory_namespace = ("memories", user_id)
         
-        # Create agent with persistent memory and fast in-session storage
+        # Create agent with persistent memory, fast in-session storage, and portfolio access
         self.agent = create_react_agent(
             ChatOpenAI(model="gpt-4o-mini", temperature=0.1),
             tools=[
                 create_manage_memory_tool(namespace=self.memory_namespace),
                 create_search_memory_tool(namespace=self.memory_namespace),
+                create_alpaca_portfolio_tool(),
             ],
             store=self.store,
             checkpointer=self.memory
@@ -41,15 +43,22 @@ class WealthAgentChat:
     def chat(self, message: str, thread_id: str = "default"):
         config = {"configurable": {"thread_id": f"{self.user_id}_{thread_id}"}}
         
-        # Create system message for wealth management context with explicit memory instructions
+        # Create system message for wealth management context with all capabilities
         system_msg = SystemMessage(
-            content="You are a helpful wealth management assistant with memory capabilities. "
-                    "IMPORTANT: Actively use your memory tools to:\n"
+            content="You are a helpful wealth management assistant with advanced capabilities. "
+                    "IMPORTANT: Actively use your available tools:\n\n"
+                    "📝 MEMORY TOOLS:\n"
                     "1. STORE important user information (name, preferences, goals, risk tolerance, etc.)\n"
                     "2. SEARCH your memory before responding to find relevant past conversations\n"
                     "3. When users share personal info, use the manage_memory tool to save it\n"
-                    "4. When users ask questions, use search_memory tool to find relevant context\n"
-                    "Always remember: You have memory tools - use them proactively!\n"
+                    "4. When users ask questions, use search_memory tool to find relevant context\n\n"
+                    "📊 PORTFOLIO TOOLS:\n"
+                    "1. Use alpaca_portfolio with action='positions' to get current holdings\n"
+                    "2. Use alpaca_portfolio with action='account' to get account summary\n"
+                    "3. Use alpaca_portfolio with action='history' to get performance data\n"
+                    "4. You can specify a 'symbol' parameter for specific position details\n\n"
+                    "Always remember: You have these powerful tools - use them proactively!\n"
+                    "When discussing investments, check their actual portfolio when relevant.\n"
                     "Provide clear, accurate financial guidance while noting this is for educational purposes only."
         )
         
@@ -74,7 +83,8 @@ def main():
     chat_agent = WealthAgentChat(user_id=user_id)
     
     print(f"Wealth Agent Chat (User: {user_id}) - Type 'quit' to exit")
-    print("The agent will remember your preferences across conversations!")
+    print("🧠 The agent will remember your preferences across conversations!")
+    print("📊 Portfolio integration available (requires Alpaca API setup)")
     print("-" * 60)
     
     while True:
