@@ -39,6 +39,10 @@ python main.py
 - **Interactive chat interface** with user identification
 - **Long-term memory** using LangMem SDK - remembers user preferences, financial goals, and past conversations
 - **Real portfolio integration** with Alpaca brokerage - access live portfolio data, positions, and performance
+- **Order execution capabilities** - place trades for stocks and cryptocurrencies directly through chat
+- **Unified trading support** - seamless trading for both traditional stocks (AAPL, TSLA) and crypto (BTC/USD, ETH/USD)
+- **Multiple order types** - market orders, limit orders, and stop orders with flexible quantity or dollar amount specifications
+- **Order management** - view order status, history, and cancel orders as needed
 - **Personalized experience** - each user gets their own memory namespace for privacy
 - **Intelligent memory management** - automatically extracts and stores important financial information
 - **Memory search capabilities** - retrieves relevant context from past conversations
@@ -72,13 +76,23 @@ The agent automatically:
 - Recalls past conversations and advice given
 - Provides personalized recommendations based on your history
 
-### Portfolio Features (Optional)
+### Portfolio & Trading Features (Optional)
 With Alpaca API setup, the agent can:
-- Access your real portfolio positions and holdings
-- Provide account summary and performance data
-- Give personalized advice based on your actual investments
-- Track portfolio changes and performance over time
-- Analyze individual positions and suggest optimizations
+- **Portfolio Analysis:**
+  - Access your real portfolio positions and holdings
+  - Provide account summary and performance data
+  - Give personalized advice based on your actual investments
+  - Track portfolio changes and performance over time
+  - Analyze individual positions and suggest optimizations
+
+- **Order Execution:**
+  - Place market orders for immediate execution at current market prices
+  - Set limit orders to buy/sell at specific target prices
+  - Create stop orders for risk management and automated selling
+  - Trade both stocks (AAPL, TSLA, etc.) and cryptocurrencies (BTC/USD, ETH/USD)
+  - Use fractional shares or specify dollar amounts for flexible position sizing
+  - View order history, status, and cancel pending orders
+  - All trading happens in paper trading mode by default for safety
 
 ### Testing
 Run the test scripts to verify functionality:
@@ -91,6 +105,9 @@ python test_persistence.py
 
 # Test Alpaca portfolio integration
 python test_alpaca.py
+
+# Test Alpaca trading functionality (stocks & crypto)
+python test_alpaca_trading.py
 ```
 
 ### Memory Persistence
@@ -106,13 +123,28 @@ See `MEMORY.md` for detailed memory system documentation.
 
 ## Alpaca Setup (Optional)
 
-To enable portfolio features:
+To enable portfolio and trading features:
 
 1. **Sign up for Alpaca**: Visit [alpaca.markets](https://alpaca.markets/) and create an account
 2. **Get API keys**: Go to Paper Trading section and generate API key and secret
 3. **Add to .env**: Copy credentials to your `.env` file
-4. **Test connection**: Run `python test_alpaca.py` to verify setup
+4. **Test connection**: Run `python test_alpaca.py` to verify portfolio setup
+5. **Test trading**: Run `python test_alpaca_trading.py` to verify trading functionality
 
-The agent works without Alpaca - portfolio features are optional but provide much more personalized advice.
+### Trading Safety & Configuration
 
-**Note:** All responses are for educational purposes only and not financial advice.
+- **Paper Trading by Default**: Set `ALPACA_PAPER_TRADING=true` (default) for risk-free simulation
+- **Real Trading**: Only enable live trading (`ALPACA_PAPER_TRADING=false`) after thorough testing
+- **Order Confirmation**: The agent will always confirm order details before execution
+- **Risk Management**: Start with small amounts and understand the risks involved
+
+### Supported Assets
+
+- **Stocks**: All major US equities (AAPL, GOOGL, MSFT, TSLA, etc.)
+- **Crypto**: Bitcoin (BTC/USD), Ethereum (ETH/USD), and 20+ other cryptocurrencies
+- **Fractional Trading**: Buy partial shares or specify dollar amounts
+- **24/7 Crypto**: Cryptocurrency trading available around the clock
+
+The agent works without Alpaca - portfolio and trading features are optional but provide much more personalized advice and capabilities.
+
+**Important:** All responses are for educational purposes only and not financial advice. Trading involves risk of loss.

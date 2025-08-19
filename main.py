@@ -8,6 +8,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langmem import create_manage_memory_tool, create_search_memory_tool
 from alpaca_tool import create_alpaca_portfolio_tool
+from alpaca_trading_tool import create_alpaca_trading_tool
 
 load_dotenv()
 
@@ -35,6 +36,7 @@ class WealthAgentChat:
                 create_manage_memory_tool(namespace=self.memory_namespace),
                 create_search_memory_tool(namespace=self.memory_namespace),
                 create_alpaca_portfolio_tool(),
+                create_alpaca_trading_tool(),
             ],
             store=self.store,
             checkpointer=self.memory
@@ -57,8 +59,22 @@ class WealthAgentChat:
                     "2. Use alpaca_portfolio with action='account' to get account summary\n"
                     "3. Use alpaca_portfolio with action='history' to get performance data\n"
                     "4. You can specify a 'symbol' parameter for specific position details\n\n"
+                    "💰 TRADING TOOLS:\n"
+                    "1. Use alpaca_trading with action='place_order' to execute trades (stocks & crypto)\n"
+                    "2. Support for stocks (e.g., 'AAPL') and crypto (e.g., 'BTC/USD')\n"
+                    "3. Order types: 'market', 'limit', 'stop' orders\n"
+                    "4. Use 'qty' for quantity or 'notional' for dollar amounts\n"
+                    "5. Use alpaca_trading with action='get_orders' to check order status\n"
+                    "6. Use alpaca_trading with action='cancel_order' to cancel orders\n"
+                    "7. Always confirm order details before execution\n\n"
+                    "🚨 IMPORTANT TRADING NOTES:\n"
+                    "- Always verify order details with the user before placing trades\n"
+                    "- Explain the risks and implications of any trade\n"
+                    "- This is paper trading for safety unless otherwise configured\n"
+                    "- Ask for confirmation on order type, quantity, and price\n\n"
                     "Always remember: You have these powerful tools - use them proactively!\n"
                     "When discussing investments, check their actual portfolio when relevant.\n"
+                    "For trading requests, always confirm details before executing.\n"
                     "Provide clear, accurate financial guidance while noting this is for educational purposes only."
         )
         

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a wealth management agent chat application built with LangChain, LangGraph, LangMem, Alpaca API, and OpenAI ChatGPT. The agent provides personalized financial guidance using advanced memory capabilities and real portfolio data integration, remembering user preferences and analyzing actual investment holdings.
+This is a wealth management agent chat application built with LangChain, LangGraph, LangMem, Alpaca API, and OpenAI ChatGPT. The agent provides personalized financial guidance using advanced memory capabilities, real portfolio data integration, and order execution functionality. It remembers user preferences, analyzes actual investment holdings, and can execute trades for both stocks and cryptocurrencies.
 
 ## Development Setup
 
@@ -28,14 +28,17 @@ python main.py
 
 # Test memory functionality
 python test_memory.py
+
+# Test trading functionality (stocks & crypto)
+python test_alpaca_trading.py
 ```
 
 ### Environment Configuration
 Required in `.env` file:
 - `OPENAI_API_KEY`: Your OpenAI API key
-- `ALPACA_API_KEY` (optional): Your Alpaca API key for portfolio access
+- `ALPACA_API_KEY` (optional): Your Alpaca API key for portfolio access and trading
 - `ALPACA_SECRET_KEY` (optional): Your Alpaca secret key
-- `ALPACA_PAPER_TRADING=true` (optional): Enable paper trading mode
+- `ALPACA_PAPER_TRADING=true` (optional): Enable paper trading mode (recommended for safety)
 - `LANGSMITH_TRACING=true` (optional): Enable tracing
 - `LANGSMITH_API_KEY`: Your LangSmith API key (optional)
 - `LANGSMITH_PROJECT`: Project name for LangSmith (optional)
@@ -45,10 +48,12 @@ Required in `.env` file:
 When developing this wealth agent application, consider:
 
 ### Core Components
-- **Chat Interface**: User interaction layer for financial queries
+- **Chat Interface**: User interaction layer for financial queries and trading commands
 - **LLM Integration**: LangChain-based conversation management with tool support
 - **Memory System**: LangMem SDK for persistent user preferences and conversation history
 - **Portfolio Integration**: Alpaca API for real-time portfolio data and positions
+- **Trading Execution**: Unified order execution for stocks and cryptocurrencies
+- **Order Management**: Real-time order status, history, and cancellation capabilities
 - **Risk Assessment**: Portfolio analysis and risk evaluation modules
 - **Recommendation Engine**: Investment advice based on actual holdings
 - **User Authentication**: Secure user session management with isolated memory
@@ -66,9 +71,12 @@ When developing this wealth agent application, consider:
 - **User namespacing**: Each user gets isolated memory space for privacy
 - **Memory tools**: `create_manage_memory_tool` and `create_search_memory_tool` for automatic memory management
 - **Portfolio tools**: `AlpacaPortfolioTool` for real-time portfolio data access
+- **Trading tools**: `AlpacaTradingTool` for unified stock and crypto order execution
 - **React agent**: Uses `create_react_agent` for comprehensive tool integration
 - **Hybrid storage**: SQLite checkpointing + InMemoryStore for performance
 - **Tool-based architecture**: Clean separation of concerns with specialized tools
+- **Order execution**: Support for market, limit, and stop orders with validation
+- **Multi-asset support**: Seamless trading for traditional stocks and cryptocurrencies
 - Implement message trimming for token management
 - Create custom tools for financial calculations
 - Use prompt templates for consistent financial advice formatting
