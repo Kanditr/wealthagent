@@ -27,10 +27,10 @@ cp .env.example .env
 python main.py
 
 # Test memory functionality
-python test_memory.py
+python tests/test_memory.py
 
 # Test trading functionality (stocks & crypto)
-python test_alpaca_trading.py
+python tests/test_alpaca_trading.py
 ```
 
 ### Environment Configuration
@@ -82,18 +82,31 @@ When developing this wealth agent application, consider:
 - Use prompt templates for consistent financial advice formatting
 - Implement streaming for real-time responses
 
-## File Structure Expectations
+## File Structure
 
-Once development begins, expect:
+Current organized structure:
 ```
 /
-├── src/ or app/              # Main application code
-├── tests/                    # Test files
-├── config/                   # Configuration files
-├── data/                     # Static data or schemas
-├── docs/                     # Documentation
-├── .env.example              # Environment variables template
-└── requirements.txt or package.json  # Dependencies
+├── main.py                   # Main application entry point
+├── requirements.txt          # Dependencies
+├── setup.sh                  # Automated setup script
+├── .env.example             # Environment variables template
+├── README.md                # Project documentation
+├── CLAUDE.md                # Claude Code instructions
+├── MEMORY.md                # Memory system documentation
+├── tools/                   # LangChain tools package
+│   ├── __init__.py
+│   ├── alpaca_portfolio.py  # Portfolio data retrieval
+│   └── alpaca_trading.py    # Order execution
+├── tests/                   # Test suite
+│   ├── __init__.py
+│   ├── test_memory.py
+│   ├── test_persistence.py
+│   ├── test_alpaca_portfolio.py
+│   └── test_alpaca_trading.py
+├── data/                    # Generated data files
+│   └── wealth_agent_memories.db
+└── venv/                    # Virtual environment
 ```
 
 ## Financial Domain Considerations

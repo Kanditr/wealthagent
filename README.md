@@ -98,16 +98,16 @@ With Alpaca API setup, the agent can:
 Run the test scripts to verify functionality:
 ```bash
 # Test memory within single session
-python test_memory.py
+python tests/test_memory.py
 
 # Test persistence across application restarts
-python test_persistence.py
+python tests/test_persistence.py
 
 # Test Alpaca portfolio integration
-python test_alpaca.py
+python tests/test_alpaca_portfolio.py
 
 # Test Alpaca trading functionality (stocks & crypto)
-python test_alpaca_trading.py
+python tests/test_alpaca_trading.py
 ```
 
 ### Memory Persistence
@@ -117,7 +117,7 @@ python test_alpaca_trading.py
 - **Fast performance** during active sessions with InMemoryStore
 - **User isolation** - each user gets their own secure memory space
 
-A `wealth_agent_memories.db` file will be created automatically in your project directory.
+A `data/wealth_agent_memories.db` file will be created automatically in your project directory.
 
 See `MEMORY.md` for detailed memory system documentation.
 
@@ -128,8 +128,8 @@ To enable portfolio and trading features:
 1. **Sign up for Alpaca**: Visit [alpaca.markets](https://alpaca.markets/) and create an account
 2. **Get API keys**: Go to Paper Trading section and generate API key and secret
 3. **Add to .env**: Copy credentials to your `.env` file
-4. **Test connection**: Run `python test_alpaca.py` to verify portfolio setup
-5. **Test trading**: Run `python test_alpaca_trading.py` to verify trading functionality
+4. **Test connection**: Run `python tests/test_alpaca_portfolio.py` to verify portfolio setup
+5. **Test trading**: Run `python tests/test_alpaca_trading.py` to verify trading functionality
 
 ### Trading Safety & Configuration
 

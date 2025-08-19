@@ -4,7 +4,10 @@ Test script for persistent memory across application restarts
 """
 
 import os
+import sys
 from dotenv import load_dotenv
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from main import WealthAgentChat
 
 load_dotenv()

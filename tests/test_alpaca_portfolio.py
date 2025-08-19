@@ -5,7 +5,11 @@ Test script for Alpaca portfolio integration
 
 import os
 from dotenv import load_dotenv
-from alpaca_tool import create_alpaca_portfolio_tool
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from tools.alpaca_portfolio import create_alpaca_portfolio_tool
 
 load_dotenv()
 

@@ -4,6 +4,7 @@ Alpaca Trading Tool for LangChain Integration - Unified Stock & Crypto Order Exe
 
 import os
 from typing import Optional, Type
+from datetime import datetime, timezone, timedelta
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 import logging
@@ -103,6 +104,35 @@ class AlpacaTradingTool(BaseTool):
             logger.error(f"Failed to initialize Alpaca trading client: {e}")
             return None
     
+    def _check_market_status(self, client):
+        """Check current market status using Alpaca clock API"""
+        try:
+            clock = client.get_clock()
+            
+            # Convert times to Thailand timezone (GMT+7)
+            thailand_tz = timezone(timedelta(hours=7))
+            current_time_thailand = clock.timestamp.astimezone(thailand_tz)
+            
+            if clock.next_open:
+                next_open_thailand = clock.next_open.astimezone(thailand_tz)
+            else:
+                next_open_thailand = None
+                
+            if clock.next_close:
+                next_close_thailand = clock.next_close.astimezone(thailand_tz)
+            else:
+                next_close_thailand = None
+            
+            return {
+                "is_open": clock.is_open,
+                "current_time": current_time_thailand,
+                "next_open": next_open_thailand,
+                "next_close": next_close_thailand
+            }
+        except Exception as e:
+            logger.warning(f"Could not get market status: {e}")
+            return None
+    
     def _run(
         self,
         action: str,
@@ -164,11 +194,21 @@ class AlpacaTradingTool(BaseTool):
         # Validate and convert parameters
         try:
             order_side = OrderSide.BUY if side.lower() == "buy" else OrderSide.SELL
-            tif = self._get_time_in_force(time_in_force)
             
             # Determine if this is crypto or stock
             is_crypto = "/" in symbol
             asset_type = "crypto" if is_crypto else "stock"
+            
+            # Smart auto-adjustment for fractional stock orders
+            auto_adjustment_msg = ""
+            original_tif = time_in_force
+            
+            # Alpaca requires DAY orders for fractional stock trading (notional amounts or fractional qty)
+            if not is_crypto and (notional or (qty and qty != int(qty))) and time_in_force.lower() == "gtc":
+                time_in_force = "day"
+                auto_adjustment_msg = "\n✅ **Auto-adjusted to DAY order** (required for fractional stock trading)"
+            
+            tif = self._get_time_in_force(time_in_force)
             
             # Place order based on type
             if order_type.lower() == "market":
@@ -184,13 +224,41 @@ class AlpacaTradingTool(BaseTool):
             else:
                 return f"❌ Unsupported order type: {order_type}. Use 'market', 'limit', or 'stop'"
             
+            # Get market status for enhanced user info
+            market_status = self._check_market_status(client)
+            
             # Submit order
             order = client.submit_order(order_request)
             
-            return self._format_order_confirmation(order, asset_type)
+            return self._format_order_confirmation(order, asset_type, auto_adjustment_msg, market_status)
         
         except Exception as e:
-            return f"❌ Order placement failed: {str(e)}"
+            error_msg = str(e)
+            
+            # Enhanced error messages for common issues
+            if "fractional orders must be DAY orders" in error_msg:
+                return (
+                    f"❌ Order placement failed: Fractional orders require DAY time-in-force\n"
+                    f"💡 **Auto-fix suggestion**: The system should have handled this automatically. "
+                    f"Please try again or contact support if the issue persists."
+                )
+            elif "insufficient buying power" in error_msg.lower():
+                return (
+                    f"❌ Insufficient buying power to place this order\n"
+                    f"💰 Check your account balance and available buying power before placing orders."
+                )
+            elif "asset is not tradable" in error_msg.lower():
+                return (
+                    f"❌ Asset '{symbol}' is not tradable at this time\n"
+                    f"🔍 This could be due to market restrictions, halted trading, or unsupported asset."
+                )
+            elif "market is closed" in error_msg.lower():
+                return (
+                    f"❌ Market is currently closed for this asset\n"
+                    f"🕒 Consider placing a limit order for execution when markets reopen."
+                )
+            else:
+                return f"❌ Order placement failed: {error_msg}\n💡 Please check your order details and try again."
     
     def _create_market_order(self, symbol: str, side: OrderSide, qty: Optional[float], notional: Optional[float], tif: TimeInForce):
         """Create market order request"""
@@ -257,8 +325,8 @@ class AlpacaTradingTool(BaseTool):
         }
         return tif_map.get(tif_str.lower(), TimeInForce.GTC)
     
-    def _format_order_confirmation(self, order, asset_type: str) -> str:
-        """Format order confirmation message"""
+    def _format_order_confirmation(self, order, asset_type: str, auto_adjustment_msg: str = "", market_status: Optional[dict] = None) -> str:
+        """Format order confirmation message with enhanced info"""
         side_emoji = "🟢" if order.side.value.lower() == "buy" else "🔴"
         asset_emoji = "₿" if asset_type == "crypto" else "📈"
         
@@ -266,14 +334,25 @@ class AlpacaTradingTool(BaseTool):
         price_info = f" at ${float(order.limit_price):,.2f}" if hasattr(order, 'limit_price') and order.limit_price else ""
         stop_info = f" (stop: ${float(order.stop_price):,.2f})" if hasattr(order, 'stop_price') and order.stop_price else ""
         
+        # Market status info for Thailand timezone
+        market_info = ""
+        if market_status:
+            if market_status["is_open"]:
+                market_info = "\n🟢 **Markets are currently OPEN**"
+            else:
+                market_info = "\n🔴 **Markets are currently CLOSED**"
+                if market_status["next_open"]:
+                    market_info += f"\n🕒 Next market open: {market_status['next_open'].strftime('%Y-%m-%d %H:%M')} (Thailand time)"
+        
         return (
-            f"✅ **Order Placed Successfully** {asset_emoji}\n\n"
+            f"✅ **Order Placed Successfully** {asset_emoji}{auto_adjustment_msg}\n\n"
             f"{side_emoji} **{order.side.value.title()}** {qty_info} of **{order.symbol}**\n"
             f"📋 Order ID: `{order.id}`\n"
             f"⏰ Type: {order.order_type.value.title()}{price_info}{stop_info}\n"
             f"⚡ Time in Force: {order.time_in_force.value.upper()}\n"
             f"📊 Status: {order.status.value.title()}\n"
-            f"🗓️ Submitted: {order.submitted_at.strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
+            f"🗓️ Submitted: {order.submitted_at.strftime('%Y-%m-%d %H:%M:%S UTC')}"
+            f"{market_info}\n"
             f"\n💡 *This is a {'paper trading' if 'paper' in str(order.id) else 'live trading'} order*"
         )
     

@@ -4,8 +4,11 @@ Test script for Alpaca trading integration (stocks and crypto)
 """
 
 import os
+import sys
 from dotenv import load_dotenv
-from alpaca_trading_tool import create_alpaca_trading_tool
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from tools.alpaca_trading import create_alpaca_trading_tool
 
 load_dotenv()
 

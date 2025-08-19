@@ -7,8 +7,7 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langmem import create_manage_memory_tool, create_search_memory_tool
-from alpaca_tool import create_alpaca_portfolio_tool
-from alpaca_trading_tool import create_alpaca_trading_tool
+from tools import create_alpaca_portfolio_tool, create_alpaca_trading_tool
 
 load_dotenv()
 
@@ -17,7 +16,7 @@ class WealthAgentChat:
         self.user_id = user_id
         
         # SQLite for conversation persistence + InMemoryStore for speed
-        self.sqlite_conn = sqlite3.connect("wealth_agent_memories.db", check_same_thread=False)
+        self.sqlite_conn = sqlite3.connect("data/wealth_agent_memories.db", check_same_thread=False)
         self.memory = SqliteSaver(self.sqlite_conn)
         
         # Configure InMemoryStore with proper embedding settings for LangMem
