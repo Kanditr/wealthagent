@@ -7,7 +7,13 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langmem import create_manage_memory_tool, create_search_memory_tool
-from tools import create_alpaca_portfolio_tool, create_alpaca_trading_tool
+from tools import (
+    create_alpaca_portfolio_tool, 
+    create_alpaca_trading_tool,
+    create_alpaca_market_data_tool,
+    create_alpaca_historical_data_tool,
+    create_alpaca_news_tool
+)
 
 load_dotenv()
 
@@ -28,7 +34,7 @@ class WealthAgentChat:
         )
         self.memory_namespace = ("memories", user_id)
         
-        # Create agent with persistent memory, fast in-session storage, and portfolio access
+        # Create agent with persistent memory, fast in-session storage, and comprehensive market tools
         self.agent = create_react_agent(
             ChatOpenAI(model="gpt-4o-mini", temperature=0.1),
             tools=[
@@ -36,6 +42,9 @@ class WealthAgentChat:
                 create_search_memory_tool(namespace=self.memory_namespace),
                 create_alpaca_portfolio_tool(),
                 create_alpaca_trading_tool(),
+                create_alpaca_market_data_tool(),
+                create_alpaca_historical_data_tool(),
+                create_alpaca_news_tool(),
             ],
             store=self.store,
             checkpointer=self.memory
@@ -66,6 +75,22 @@ class WealthAgentChat:
                     "5. Use alpaca_trading with action='get_orders' to check order status\n"
                     "6. Use alpaca_trading with action='cancel_order' to cancel orders\n"
                     "7. Always confirm order details before execution\n\n"
+                    "📈 MARKET DATA TOOLS:\n"
+                    "1. Use alpaca_market_data for real-time quotes, trades, and bars\n"
+                    "2. Actions: 'quote' (bid/ask), 'trade' (latest trade), 'bar' (OHLCV)\n"
+                    "3. Multi-symbol support: 'multi_quote', 'multi_bar' for multiple symbols\n"
+                    "4. Supports both stocks ('AAPL') and crypto ('BTC/USD')\n\n"
+                    "📊 HISTORICAL DATA TOOLS:\n"
+                    "1. Use alpaca_historical_data for historical market analysis\n"
+                    "2. Actions: 'bars' (OHLCV history), 'trades' (trade history)\n"
+                    "3. Timeframes: '1Min', '5Min', '15Min', '30Min', '1Hour', '1Day'\n"
+                    "4. Date filtering: specify start_date and end_date (YYYY-MM-DD)\n"
+                    "5. Feed options: 'iex' (free) or 'sip' (premium)\n\n"
+                    "📰 NEWS TOOLS:\n"
+                    "1. Use alpaca_news for market news and analysis\n"
+                    "2. Actions: 'latest' (recent 24h news), 'search' (date-filtered news)\n"
+                    "3. Symbol filtering: get news for specific stocks or general market\n"
+                    "4. Includes sentiment analysis where available\n\n"
                     "🚨 IMPORTANT TRADING NOTES:\n"
                     "- Always verify order details with the user before placing trades\n"
                     "- Explain the risks and implications of any trade\n"
@@ -73,6 +98,7 @@ class WealthAgentChat:
                     "- Ask for confirmation on order type, quantity, and price\n\n"
                     "Always remember: You have these powerful tools - use them proactively!\n"
                     "When discussing investments, check their actual portfolio when relevant.\n"
+                    "Use market data and news tools to provide informed analysis.\n"
                     "For trading requests, always confirm details before executing.\n"
                     "Provide clear, accurate financial guidance while noting this is for educational purposes only."
         )
