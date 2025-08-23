@@ -8,11 +8,18 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langmem import create_manage_memory_tool, create_search_memory_tool
 from tools import (
+    # Alpaca tools
     create_alpaca_portfolio_tool, 
     create_alpaca_trading_tool,
     create_alpaca_market_data_tool,
     create_alpaca_historical_data_tool,
-    create_alpaca_news_tool
+    create_alpaca_news_tool,
+    # YFinance tools
+    create_yfinance_company_profile_tool,
+    create_yfinance_financial_ratios_tool,
+    create_yfinance_financial_statements_tool,
+    create_yfinance_earnings_analysis_tool,
+    create_yfinance_quality_score_tool
 )
 
 load_dotenv()
@@ -38,13 +45,21 @@ class WealthAgentChat:
         self.agent = create_react_agent(
             ChatOpenAI(model="gpt-4o-mini", temperature=0.1),
             tools=[
+                # Memory tools
                 create_manage_memory_tool(namespace=self.memory_namespace),
                 create_search_memory_tool(namespace=self.memory_namespace),
+                # Alpaca tools
                 create_alpaca_portfolio_tool(),
                 create_alpaca_trading_tool(),
                 create_alpaca_market_data_tool(),
                 create_alpaca_historical_data_tool(),
                 create_alpaca_news_tool(),
+                # YFinance fundamental analysis tools
+                create_yfinance_company_profile_tool(),
+                create_yfinance_financial_ratios_tool(),
+                create_yfinance_financial_statements_tool(),
+                create_yfinance_earnings_analysis_tool(),
+                create_yfinance_quality_score_tool(),
             ],
             store=self.store,
             checkpointer=self.memory
@@ -91,11 +106,22 @@ class WealthAgentChat:
                     "2. Actions: 'latest' (recent 24h news), 'search' (date-filtered news)\n"
                     "3. Symbol filtering: get news for specific stocks or general market\n"
                     "4. Includes sentiment analysis where available\n\n"
+                    "🔍 YFINANCE FUNDAMENTAL ANALYSIS TOOLS:\n"
+                    "1. Use yfinance_company_profile for company overview, sector, industry, executives\n"
+                    "2. Use yfinance_financial_ratios for P/E, ROE, debt ratios, margins, valuation metrics\n"
+                    "3. Use yfinance_financial_statements for income statement, balance sheet, cash flow (annual/quarterly)\n"
+                    "4. Use yfinance_earnings_analysis for earnings history, analyst estimates, recommendations\n"
+                    "5. Use yfinance_quality_score for comprehensive investment quality assessment and scoring\n\n"
                     "🚨 IMPORTANT TRADING NOTES:\n"
                     "- Always verify order details with the user before placing trades\n"
                     "- Explain the risks and implications of any trade\n"
                     "- This is paper trading for safety unless otherwise configured\n"
                     "- Ask for confirmation on order type, quantity, and price\n\n"
+                    "💡 ANALYSIS WORKFLOW SUGGESTIONS:\n"
+                    "- For stock analysis: Start with company profile, then financial ratios, then earnings analysis\n"
+                    "- Use quality score for comprehensive investment assessment\n"
+                    "- Check financial statements for detailed fundamental analysis\n"
+                    "- Combine YFinance fundamental data with Alpaca market data for complete picture\n\n"
                     "Always remember: You have these powerful tools - use them proactively!\n"
                     "When discussing investments, check their actual portfolio when relevant.\n"
                     "Use market data and news tools to provide informed analysis.\n"
@@ -126,6 +152,7 @@ def main():
     print(f"Wealth Agent Chat (User: {user_id}) - Type 'quit' to exit")
     print("🧠 The agent will remember your preferences across conversations!")
     print("📊 Portfolio integration available (requires Alpaca API setup)")
+    print("🔍 Fundamental analysis powered by YFinance (no API key needed)")
     print("-" * 60)
     
     while True:
