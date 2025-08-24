@@ -25,7 +25,12 @@ from tools import (
     create_fred_economic_dashboard_tool,
     create_fred_sector_analysis_tool,
     # Tavily tools
-    create_tavily_news_tool
+    create_tavily_news_tool,
+    # Technical Analysis tools
+    create_technical_indicators_tool,
+    create_technical_signals_tool,
+    create_chart_patterns_tool,
+    create_technical_screening_tool
 )
 
 load_dotenv()
@@ -72,6 +77,11 @@ class WealthAgentChat:
                 create_fred_sector_analysis_tool(),
                 # Tavily breaking news and research tools
                 create_tavily_news_tool(),
+                # Technical Analysis tools
+                create_technical_indicators_tool(),
+                create_technical_signals_tool(),
+                create_chart_patterns_tool(),
+                create_technical_screening_tool(),
             ],
             store=self.store,
             checkpointer=self.memory
@@ -135,6 +145,19 @@ class WealthAgentChat:
                     "   - Analysis types: 'overview', 'health_score', 'cycle_analysis', 'alerts'\n"
                     "3. Use fred_sector_analysis for industry-specific economic data\n"
                     "   - Analysis types: 'industrial', 'employment', 'housing', 'consumer', 'overview'\n\n"
+                    "📊 TECHNICAL ANALYSIS TOOLS:\n"
+                    "1. Use technical_indicators for comprehensive technical indicator analysis\n"
+                    "   - Actions: 'momentum' (RSI, MACD, Stochastic), 'trend' (MA, ADX), 'volatility' (BB, ATR)\n"
+                    "   - 'volume' (OBV, MFI), 'oscillators' (Williams %R, CCI), 'all_indicators' (complete analysis)\n"
+                    "2. Use technical_signals for trading signal generation and strength analysis\n"
+                    "   - Actions: 'buy_signals', 'sell_signals', 'crossover_analysis', 'divergence_detection'\n"
+                    "   - 'signal_strength' (multi-indicator consensus scoring with confidence levels)\n"
+                    "3. Use chart_patterns for price action and pattern recognition\n"
+                    "   - Actions: 'support_resistance', 'trend_analysis', 'candlestick_patterns'\n"
+                    "   - 'breakout_analysis', 'pattern_scan' (comprehensive pattern recognition)\n"
+                    "4. Use technical_screening for multi-symbol technical analysis screening\n"
+                    "   - Actions: 'momentum_screen', 'oversold_screen', 'breakout_screen'\n"
+                    "   - 'custom_screen' (user criteria), 'multi_timeframe_screen' (confluence analysis)\n\n"
                     "🚨 IMPORTANT TRADING NOTES:\n"
                     "- Always verify order details with the user before placing trades\n"
                     "- Explain the risks and implications of any trade\n"
@@ -144,8 +167,11 @@ class WealthAgentChat:
                     "- For stock analysis: Start with company profile, then financial ratios, then earnings analysis\n"
                     "- Use quality score for comprehensive investment assessment\n"
                     "- Check financial statements for detailed fundamental analysis\n"
-                    "- For complete analysis: Economic context (FRED) + Market data (Alpaca) + Fundamentals (YFinance)\n"
+                    "- For complete analysis: Economic context (FRED) + Market data (Alpaca) + Fundamentals (YFinance) + Technical (TA)\n"
                     "- Economic analysis: Use dashboard overview first, then specific indicators or sectors\n"
+                    "- Technical analysis: Start with indicators, then signals, then patterns for complete picture\n"
+                    "- For trading: Use technical_signals for entry/exit timing, chart_patterns for setup confirmation\n"
+                    "- For screening: Use technical_screening to find opportunities across multiple symbols\n"
                     "- Consider economic cycle and sector health when making investment recommendations\n\n"
                     "Always remember: You have these powerful tools - use them proactively!\n"
                     "When discussing investments, check their actual portfolio when relevant.\n"
@@ -188,6 +214,8 @@ def main():
     print("📊 Portfolio integration available (requires Alpaca API setup)")
     print("🔍 Fundamental analysis powered by YFinance (no API key needed)")
     print("🏛️ Economic analysis powered by FRED (free API key required)")
+    print("📰 Breaking news powered by Tavily (API key required)")
+    print("📈 Technical analysis powered by pandas-ta (no API key needed)")
     print("-" * 60)
     
     while True:

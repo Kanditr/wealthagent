@@ -26,6 +26,12 @@ from .fred_sector_analysis import create_fred_sector_analysis_tool
 # Tavily tools (breaking news and research)
 from .tavily_news import create_tavily_news_tool
 
+# Technical Analysis tools (pandas-ta powered)
+from .technical_indicators import create_technical_indicators_tool
+from .technical_signals import create_technical_signals_tool
+from .chart_patterns import create_chart_patterns_tool
+from .technical_screening import create_technical_screening_tool
+
 __all__ = [
     # Alpaca tools
     "create_alpaca_portfolio_tool",
@@ -48,4 +54,10 @@ __all__ = [
     
     # Tavily tools
     "create_tavily_news_tool",
+    
+    # Technical Analysis tools
+    "create_technical_indicators_tool",
+    "create_technical_signals_tool", 
+    "create_chart_patterns_tool",
+    "create_technical_screening_tool",
 ]
