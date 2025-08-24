@@ -23,6 +23,9 @@ from .fred_economic_indicators import create_fred_economic_indicators_tool
 from .fred_economic_dashboard import create_fred_economic_dashboard_tool
 from .fred_sector_analysis import create_fred_sector_analysis_tool
 
+# Tavily tools (breaking news and research)
+from .tavily_news import create_tavily_news_tool
+
 __all__ = [
     # Alpaca tools
     "create_alpaca_portfolio_tool",
@@ -42,4 +45,7 @@ __all__ = [
     "create_fred_economic_indicators_tool",
     "create_fred_economic_dashboard_tool",
     "create_fred_sector_analysis_tool",
+    
+    # Tavily tools
+    "create_tavily_news_tool",
 ]

@@ -23,7 +23,9 @@ from tools import (
     # FRED tools
     create_fred_economic_indicators_tool,
     create_fred_economic_dashboard_tool,
-    create_fred_sector_analysis_tool
+    create_fred_sector_analysis_tool,
+    # Tavily tools
+    create_tavily_news_tool
 )
 
 load_dotenv()
@@ -68,6 +70,8 @@ class WealthAgentChat:
                 create_fred_economic_indicators_tool(),
                 create_fred_economic_dashboard_tool(),
                 create_fred_sector_analysis_tool(),
+                # Tavily breaking news and research tools
+                create_tavily_news_tool(),
             ],
             store=self.store,
             checkpointer=self.memory
@@ -111,9 +115,12 @@ class WealthAgentChat:
                     "5. Feed options: 'iex' (free) or 'sip' (premium)\n\n"
                     "📰 NEWS TOOLS:\n"
                     "1. Use alpaca_news for market news and analysis\n"
-                    "2. Actions: 'latest' (recent 24h news), 'search' (date-filtered news)\n"
-                    "3. Symbol filtering: get news for specific stocks or general market\n"
-                    "4. Includes sentiment analysis where available\n\n"
+                    "   - Actions: 'latest' (recent 24h news), 'search' (date-filtered news)\n"
+                    "   - Symbol filtering for specific stocks, includes sentiment analysis\n"
+                    "2. Use tavily_news for breaking news and comprehensive research\n"
+                    "   - Actions: 'breaking_news' (real-time updates), 'company_research' (deep analysis)\n"
+                    "   - 'market_events' (Fed, economic data), 'sentiment_analysis' (multi-source sentiment)\n"
+                    "   - Superior for investment decisions, broader context, multiple sources\n\n"
                     "🔍 YFINANCE FUNDAMENTAL ANALYSIS TOOLS:\n"
                     "1. Use yfinance_company_profile for company overview, sector, industry, executives\n"
                     "2. Use yfinance_financial_ratios for P/E, ROE, debt ratios, margins, valuation metrics\n"
