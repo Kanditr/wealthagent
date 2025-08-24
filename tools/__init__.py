@@ -18,6 +18,11 @@ from .yfinance_financial_statements import create_yfinance_financial_statements_
 from .yfinance_earnings_analysis import create_yfinance_earnings_analysis_tool
 from .yfinance_quality_score import create_yfinance_quality_score_tool
 
+# FRED tools (economic analysis)
+from .fred_economic_indicators import create_fred_economic_indicators_tool
+from .fred_economic_dashboard import create_fred_economic_dashboard_tool
+from .fred_sector_analysis import create_fred_sector_analysis_tool
+
 __all__ = [
     # Alpaca tools
     "create_alpaca_portfolio_tool",
@@ -32,4 +37,9 @@ __all__ = [
     "create_yfinance_financial_statements_tool",
     "create_yfinance_earnings_analysis_tool",
     "create_yfinance_quality_score_tool",
+    
+    # FRED tools
+    "create_fred_economic_indicators_tool",
+    "create_fred_economic_dashboard_tool",
+    "create_fred_sector_analysis_tool",
 ]

@@ -19,7 +19,11 @@ from tools import (
     create_yfinance_financial_ratios_tool,
     create_yfinance_financial_statements_tool,
     create_yfinance_earnings_analysis_tool,
-    create_yfinance_quality_score_tool
+    create_yfinance_quality_score_tool,
+    # FRED tools
+    create_fred_economic_indicators_tool,
+    create_fred_economic_dashboard_tool,
+    create_fred_sector_analysis_tool
 )
 
 load_dotenv()
@@ -60,6 +64,10 @@ class WealthAgentChat:
                 create_yfinance_financial_statements_tool(),
                 create_yfinance_earnings_analysis_tool(),
                 create_yfinance_quality_score_tool(),
+                # FRED economic analysis tools
+                create_fred_economic_indicators_tool(),
+                create_fred_economic_dashboard_tool(),
+                create_fred_sector_analysis_tool(),
             ],
             store=self.store,
             checkpointer=self.memory
@@ -112,6 +120,14 @@ class WealthAgentChat:
                     "3. Use yfinance_financial_statements for income statement, balance sheet, cash flow (annual/quarterly)\n"
                     "4. Use yfinance_earnings_analysis for earnings history, analyst estimates, recommendations\n"
                     "5. Use yfinance_quality_score for comprehensive investment quality assessment and scoring\n\n"
+                    "🏛️ FRED ECONOMIC ANALYSIS TOOLS:\n"
+                    "1. Use fred_economic_indicators for key economic indicators (GDP, unemployment, inflation, rates)\n"
+                    "   - Actions: 'indicator' (single), 'multi_indicator' (multiple), 'trend' (with analysis)\n"
+                    "   - Key series: GDPC1 (GDP), UNRATE (unemployment), CPIAUCSL (CPI), FEDFUNDS (fed rate)\n"
+                    "2. Use fred_economic_dashboard for comprehensive economic health overview\n"
+                    "   - Analysis types: 'overview', 'health_score', 'cycle_analysis', 'alerts'\n"
+                    "3. Use fred_sector_analysis for industry-specific economic data\n"
+                    "   - Analysis types: 'industrial', 'employment', 'housing', 'consumer', 'overview'\n\n"
                     "🚨 IMPORTANT TRADING NOTES:\n"
                     "- Always verify order details with the user before placing trades\n"
                     "- Explain the risks and implications of any trade\n"
@@ -121,7 +137,9 @@ class WealthAgentChat:
                     "- For stock analysis: Start with company profile, then financial ratios, then earnings analysis\n"
                     "- Use quality score for comprehensive investment assessment\n"
                     "- Check financial statements for detailed fundamental analysis\n"
-                    "- Combine YFinance fundamental data with Alpaca market data for complete picture\n\n"
+                    "- For complete analysis: Economic context (FRED) + Market data (Alpaca) + Fundamentals (YFinance)\n"
+                    "- Economic analysis: Use dashboard overview first, then specific indicators or sectors\n"
+                    "- Consider economic cycle and sector health when making investment recommendations\n\n"
                     "Always remember: You have these powerful tools - use them proactively!\n"
                     "When discussing investments, check their actual portfolio when relevant.\n"
                     "Use market data and news tools to provide informed analysis.\n"
@@ -129,9 +147,18 @@ class WealthAgentChat:
                     "Provide clear, accurate financial guidance while noting this is for educational purposes only."
         )
         
+        # Configure with higher recursion limit and better error handling
+        config_with_limits = {
+            **config,
+            "configurable": {
+                **config.get("configurable", {}),
+                "recursion_limit": 15  # Reduced from default 25 to prevent infinite loops
+            }
+        }
+        
         response = self.agent.invoke(
             {"messages": [system_msg, HumanMessage(content=message)]}, 
-            config
+            config_with_limits
         )
         
         return response["messages"][-1].content
@@ -153,6 +180,7 @@ def main():
     print("🧠 The agent will remember your preferences across conversations!")
     print("📊 Portfolio integration available (requires Alpaca API setup)")
     print("🔍 Fundamental analysis powered by YFinance (no API key needed)")
+    print("🏛️ Economic analysis powered by FRED (free API key required)")
     print("-" * 60)
     
     while True:
